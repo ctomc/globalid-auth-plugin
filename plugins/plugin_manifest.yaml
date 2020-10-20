@@ -1,0 +1,9 @@
+name: TokendataHeader
+pluginFileName: TokendataHeader.so
+exportedSymbolName: Plugin
+config:
+  RequiredHeader: my-auth-header
+  AllowedValues:
+  - foo
+  - bar
+  - baz
