@@ -1,4 +1,4 @@
-package checks_test
+package main_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestChecks(t *testing.T) {
+func TestHeader(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Checks Suite")
+	RunSpecs(t, "RequiredHeader Suite")
 }

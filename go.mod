@@ -1,23 +1,28 @@
-module github.com/solo-io/ext-auth-plugin-examples
+module gitlab.com/globalid/experiments/globalid-auth-plugin
 
-go 1.15
+go 1.14
 
 require (
 	// Merged 'require' section of the Gloo depenencies and your go.mod file:
+	github.com/cncf/udpa/go v0.0.0-20200629203442-efcf912fb354
 	github.com/envoyproxy/go-control-plane v0.9.6-0.20200529035633-fc42e08917e9
-	github.com/google/go-cmp v0.5.0 // indirect
+	github.com/google/go-cmp v0.5.0
 	github.com/onsi/ginkgo v1.12.1
 	github.com/onsi/gomega v1.10.1
 	github.com/pkg/errors v0.9.1
 	github.com/solo-io/ext-auth-plugins v0.1.2
 	github.com/solo-io/go-utils v0.16.6
 	go.uber.org/zap v1.15.0
-	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
-	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
-	golang.org/x/tools v0.0.0-20200916195026-c9a70fc28ce3 // indirect
+	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
+	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae
+	golang.org/x/tools v0.0.0-20200916195026-c9a70fc28ce3
 	google.golang.org/genproto v0.0.0-20200309141739-5b75447e413d // indirect
-	google.golang.org/grpc v1.29.1 // indirect
-)
+	google.golang.org/grpc v1.29.1
+	github.com/envoyproxy/protoc-gen-validate v0.4.0
+	google.golang.org/genproto v0.0.0-20200626011028-ee7919e894b5
+	golang.org/x/text v0.3.3
+	github.com/rotisserie/eris v0.4.0
+	)
 
 replace (
 	// Merged 'replace' section of the Gloo depenencies and your go.mod file:

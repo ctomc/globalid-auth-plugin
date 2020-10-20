@@ -6,8 +6,8 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	impl "github.com/solo-io/ext-auth-plugin-examples/plugins/required_header/pkg"
 	"github.com/solo-io/ext-auth-plugins/api"
+	impl "gitlab.com/globalid/experiments/globalid-auth-plugin/plugins/tokendata_header/pkg"
 )
 
 var _ = Describe("Plugin", func() {
@@ -29,7 +29,7 @@ var _ = Describe("Plugin", func() {
 		typedInstance, ok := instance.(*impl.Config)
 		Expect(ok).To(BeTrue())
 
-		Expect(typedInstance.RequiredHeader).To(BeEmpty())
-		Expect(typedInstance.AllowedValues).To(BeEmpty())
+		Expect(typedInstance.HeaderName).To(BeEmpty())
+
 	})
 })

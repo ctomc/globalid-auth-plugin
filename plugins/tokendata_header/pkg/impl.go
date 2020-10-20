@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -16,55 +17,46 @@ var (
 	UnexpectedConfigError = func(typ interface{}) error {
 		return errors.New(fmt.Sprintf("unexpected config type %T", typ))
 	}
-	_ api.ExtAuthPlugin = new(RequiredHeaderPlugin)
+	_ api.ExtAuthPlugin = new(TokendataPlugin)
 )
 
-type RequiredHeaderPlugin struct{}
+type TokendataPlugin struct{}
 
 type Config struct {
-	RequiredHeader string
-	AllowedValues  []string
+	HeaderName string
 }
 
-func (p *RequiredHeaderPlugin) NewConfigInstance(ctx context.Context) (interface{}, error) {
+func (p *TokendataPlugin) NewConfigInstance(ctx context.Context) (interface{}, error) {
 	return &Config{}, nil
 }
 
-func (p *RequiredHeaderPlugin) GetAuthService(ctx context.Context, configInstance interface{}) (api.AuthService, error) {
+func (p *TokendataPlugin) GetAuthService(ctx context.Context, configInstance interface{}) (api.AuthService, error) {
 	config, ok := configInstance.(*Config)
 	if !ok {
 		return nil, UnexpectedConfigError(configInstance)
 	}
 
-	logger(ctx).Infow("Parsed RequiredHeaderAuthService config",
-		zap.Any("requiredHeader", config.RequiredHeader),
-		zap.Any("allowedHeaderValues", config.AllowedValues),
+	logger(ctx).Infow("Parsed TokenDataAuthService config",
+		zap.Any("headerName", config.HeaderName),
 	)
 
-	valueMap := map[string]bool{}
-	for _, v := range config.AllowedValues {
-		valueMap[v] = true
-	}
-
-	return &RequiredHeaderAuthService{
-		RequiredHeader: config.RequiredHeader,
-		AllowedValues:  valueMap,
+	return &TokenDataAuthService{
+		HeaderName: config.HeaderName,
 	}, nil
 }
 
-type RequiredHeaderAuthService struct {
-	RequiredHeader string
-	AllowedValues  map[string]bool
+type TokenDataAuthService struct {
+	HeaderName string
 }
 
 // You can use the provided context to perform operations that are bound to the services lifecycle.
-func (c *RequiredHeaderAuthService) Start(context.Context) error {
+func (c *TokenDataAuthService) Start(context.Context) error {
 	// no-op
 	return nil
 }
 
-func (c *RequiredHeaderAuthService) Authorize(ctx context.Context, request *api.AuthorizationRequest) (*api.AuthorizationResponse, error) {
-	for key, value := range request.CheckRequest.GetAttributes().GetRequest().GetHttp().GetHeaders() {
+func (c *TokenDataAuthService) Authorize(ctx context.Context, request *api.AuthorizationRequest) (*api.AuthorizationResponse, error) {
+	/*for key, value := range request.CheckRequest.GetAttributes().GetRequest().GetHttp().GetHeaders() {
 		if key == c.RequiredHeader {
 			logger(ctx).Infow("Found required header, checking value.", "header", key, "value", value)
 
@@ -90,7 +82,39 @@ func (c *RequiredHeaderAuthService) Authorize(ctx context.Context, request *api.
 		}
 	}
 	logger(ctx).Infow("Required header not found, denying access")
-	return api.UnauthorizedResponse(), nil
+	return api.UnauthorizedResponse(), nil*/
+	for key, value := range request.CheckRequest.GetAttributes().GetRequest().GetHttp().GetHeaders() {
+		logger(ctx).Infow("Header: ", "header", key, "value", value)
+	}
+
+	b, err := json.Marshal(request)
+	if err != nil {
+		panic(err)
+	}
+
+	logger(ctx).Infow("request json: ", string(b))
+	ct, err := json.Marshal(ctx)
+	if err != nil {
+		panic(err)
+	}
+	logger(ctx).Infow("context json: ", string(ct))
+
+	logger(ctx).Infow("request: ", request)
+	logger(ctx).Infow("context: ", ctx)
+
+	response := api.AuthorizedResponse()
+	response.CheckResponse.HttpResponse = &envoyauthv2.CheckResponse_OkResponse{
+		OkResponse: &envoyauthv2.OkHttpResponse{
+			Headers: []*envoycorev2.HeaderValueOption{{
+				Header: &envoycorev2.HeaderValue{
+					Key:   "custom-plugin-header",
+					Value: "true",
+				},
+			}},
+		},
+	}
+	return response, nil
+
 }
 
 func logger(ctx context.Context) *zap.SugaredLogger {

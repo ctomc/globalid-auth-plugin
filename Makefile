@@ -11,13 +11,13 @@ format:
 GLOOE_VERSION ?= 1.5.2
 
 # Set this variable to the name of your build plugin
-PLUGIN_BUILD_NAME ?= TokendataHeader.so
+PLUGIN_BUILD_NAME ?= TokendataPlugin.so
 
 # Set this variable to the image name and tag of your plugin
 PLUGIN_IMAGE ?= globalid-auth-plugins:$(GLOOE_VERSION)
 
 # Set this variable to the name of your plugin
-PLUGIN_NAME ?= required_header
+PLUGIN_NAME ?= tokendata_header
 
 # Set this variable to the base image name for the container that will have the compiled plugin
 RUN_IMAGE ?= alpine:3.12
@@ -115,7 +115,7 @@ verify-plugin: $(GLOOE_DIR)/verify-plugins-linux-amd64
 	$(GLOOE_DIR)/verify-plugins-linux-amd64 -pluginDir plugins -manifest plugins/plugin_manifest.yaml
 
 .PHONY: build-plugins-for-tests
-build-plugins-for-tests: $(EXAMPLES_DIR)/required_header/RequiredHeader.so
+build-plugins-for-tests: $(EXAMPLES_DIR)/tokendata_header/TokendataPlugin.so
 
 $(EXAMPLES_DIR)/required_header/RequiredHeader.so: $(SOURCES)
 	go build -buildmode=plugin -o $(EXAMPLES_DIR)/required_header/RequiredHeader.so $(EXAMPLES_DIR)/required_header/plugin.go

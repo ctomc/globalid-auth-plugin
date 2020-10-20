@@ -1,0 +1,27 @@
+variables:
+  IMAGE_REGISTRY: 715299534867.dkr.ecr.us-east-1.amazonaws.com
+  REPOSITORY_URL: $IMAGE_REGISTRY/$CI_PROJECT_NAME
+  DOCKERFILE: Dockerfile
+
+#include:
+# - https://staging-cdn.globalid.net/gitlab-ci/docker-image.yaml
+#  - https://staging-cdn.globalid.net/gitlab-ci/kubernetes-deploy-job.yaml
+
+stages:
+- build
+
+docker:
+  cache:
+    policy: push
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [ "" ]
+  script:
+    - echo "{\"credsStore\":\"ecr-login\" }" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $DOCKERFILE --build-arg GO_BUILD_IMAGE=golang:1.15.2-alpine \
+      --build-arg RUN_IMAGE=alpine:3.12 \
+      --build-arg GLOOE_VERSION=1.5.2 \
+      --build-arg STORAGE_HOSTNAME=storage.googleapis.com \
+      --build-arg PLUGIN_MODULE_PATH=gitlab.com/globalid/experiments/globalid-auth-plugin \
+      --destination $REPOSITORY_URL:$CI_COMMIT_SHA --destination $REPOSITORY_URL:$CI_COMMIT_REF_NAME --destination $REPOSITORY_URL:latest

@@ -6,7 +6,7 @@ import (
 	"os"
 	"sort"
 
-	"github.com/solo-io/ext-auth-plugin-examples/pkg/checks"
+	"gitlab.com/globalid/experiments/globalid-auth-plugin/pkg/checks"
 )
 
 func main() {

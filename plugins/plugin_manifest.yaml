@@ -1,9 +1,5 @@
-name: TokendataHeader
-pluginFileName: TokendataHeader.so
+name: TokendataPlugin
+pluginFileName: TokendataPlugin.so
 exportedSymbolName: Plugin
 config:
-  RequiredHeader: my-auth-header
-  AllowedValues:
-  - foo
-  - bar
-  - baz
+  HeaderName: x-token-data
